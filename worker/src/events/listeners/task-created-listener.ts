@@ -4,6 +4,7 @@ import {
   Listener,
   TaskCreatedEvent
 } from '@asaqueue/common'
+import { randomBytes } from 'crypto'
 import { TaskCompletedPublisher } from '../publishers'
 import { queueGroupName } from './queue-group-name'
 
@@ -14,15 +15,19 @@ export class TaskCreatedListener extends Listener<TaskCreatedEvent> {
   async onMessage(data: TaskCreatedEvent['data'], msg: Message) {
     const { task, id } = data
     
-    console.log(`${id} - Task id: ${task.id}. Content: ${task.content}` )
+    console.log(`${id}:${task.id} - We received text: ${task.content}` )
     
-    await new TaskCompletedPublisher(this.client).publish({
-      id,
-      task: {
-        id: task.id,
-        result: 'Completed'
-      }
-    })
+    const color = randomBytes(6).toString('hex')
+
+    setTimeout(() => {
+      new TaskCompletedPublisher(this.client).publish({
+        id,
+        task: {
+          id: task.id,
+          result: color
+        }
+      })
+    }, 2000)
 
     msg.ack()
   }

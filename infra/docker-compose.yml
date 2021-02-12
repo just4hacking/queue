@@ -4,6 +4,21 @@ services:
     build:
       context: ../worker
       dockerfile: Dockerfile
+    networks:
+      - queue_network
+    environment: 
+      - NODE_ENV=production
+      - NATS_URI=http://nats-broker:4222
+      - NATS_CLUSTER_ID=queue
+      - NATS_CLIENT_ID=worker
+    depends_on: 
+      - broker
+    #restart: always
+
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
     networks:
@@ -12,10 +27,11 @@ services:
       - NODE_ENV=production
       - NATS_URI=http://nats-broker:4222
       - NATS_CLUSTER_ID=queue
-      - NATS_CLIENT_ID=worker
-    #restart: always
+      - NATS_CLIENT_ID=api
+    depends_on: 
+      - broker
 
-  nats-broker:
+  broker:
     image: nats-streaming:0.17.0
     ports:
       - 4222:4222
@@ -37,6 +53,7 @@ services:
     ]
     networks:
       - queue_network
+  
   
 networks:
   queue_network:

@@ -2,13 +2,14 @@ import express from 'express'
 import 'express-async-errors'
 import { json } from 'body-parser'
 import { errorHandler, NotFoundError } from '@asaqueue/common'
-import { indexOrderRouter } from './routes/index'
+import { newTaskRouter, indexTaskRouter } from './routes'
 
 const app = express()
 app.set('trust proxy', true)
 app.use(json())
 
-app.use(indexOrderRouter)
+app.use(newTaskRouter)
+app.use(indexTaskRouter)
 
 app.all('*', async (req, res, next) => {
   throw new NotFoundError()

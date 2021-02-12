@@ -1,11 +1,11 @@
 import 'express-async-errors'
 import { app } from './app'
+import { TaskCreatedListener } from './events/listeners'
 import { natsWrapper } from './nats-wrapper'
 
 const start = async () => {
   console.log('Starting... (dev)')
   
-  /*
   if (!process.env.NATS_URI) {
     throw new Error("NATS_URI must be defined")
   }
@@ -18,10 +18,9 @@ const start = async () => {
   if (!process.env.NATS_CLIENT_ID) {
     throw new Error("NATS_CLIENT_ID must be defined")
   }
-  */
 
   try {
-    /*
+    
     await natsWrapper.connect(
       process.env.NATS_CLUSTER_ID, 
       process.env.NATS_CLIENT_ID, 
@@ -36,8 +35,8 @@ const start = async () => {
 
     process.on('SIGINT', () => natsWrapper.client.close())
     process.on('SIGTERM', () => natsWrapper.client.close())
-    */
-    //new TicketCreatedListener(natsWrapper.client).listen()
+    
+    new TaskCreatedListener(natsWrapper.client).listen()
   }
   catch (err) {
     console.log(err)

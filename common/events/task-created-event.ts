@@ -1,10 +1,10 @@
 import { Subjects } from './subjects';
 
-export interface WorkCreatedEvent {
-  subject: Subjects.WorkCreated;
+export interface TaskCreatedEvent {
+  subject: Subjects.TaskCreated;
   data: {
     id: string;
-    work: {
+    task: {
       id: string;
       content: string;
     }

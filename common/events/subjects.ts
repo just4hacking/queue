@@ -1,5 +1,5 @@
 export enum Subjects {
-  WorkCreated = 'work:created',
-  WorkCompleted = 'work:completed',
-  WorkCancelled = 'work:cancelled'
+  TaskCreated = 'work:created',
+  TaskCompleted = 'work:completed',
+  TaskCancelled = 'work:cancelled'
 }

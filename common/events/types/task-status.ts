@@ -1,4 +1,4 @@
-export enum WorkStatus {
+export enum TaskStatus {
   Created = 'created',
   Processing = 'processing',
   Complete = 'complete',

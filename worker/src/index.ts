@@ -1,4 +1,3 @@
-import 'express-async-errors'
 import { TaskCreatedListener } from './events/listeners'
 import { natsWrapper } from './nats-wrapper'
 

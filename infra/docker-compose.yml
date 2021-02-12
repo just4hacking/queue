@@ -1,5 +1,14 @@
 version: '3'
 services:
+  client:
+    build: 
+      context: ../client
+      dockerfile: Dockerfile
+    ports: 
+      - 8080:3000
+    volumes: 
+      - ../client:/app
+
   worker:
     build:
       context: ../worker
@@ -8,7 +17,7 @@ services:
       - queue_network
     environment: 
       - NODE_ENV=production
-      - NATS_URI=http://nats-broker:4222
+      - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=worker
     depends_on: 
@@ -25,7 +34,7 @@ services:
       - queue_network
     environment: 
       - NODE_ENV=production
-      - NATS_URI=http://nats-broker:4222
+      - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=api
     depends_on: 
@@ -53,7 +62,6 @@ services:
     ]
     networks:
       - queue_network
-  
   
 networks:
   queue_network:

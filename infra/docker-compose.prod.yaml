@@ -1,0 +1,114 @@
+version: '3'
+services:
+  client:
+    image: ankarenkosergey/queue_client
+    volumes: 
+      - ../client:/app
+    networks: 
+      - nginx_network
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  nginx:
+    image: nginx:1.19-alpine
+    ports:
+      - 80:80
+    volumes: 
+      - ./nginx/templates:/etc/nginx/templates
+    restart: always
+    environment:
+      NGINX_HOST: _
+    restart: always
+    networks:
+      - nginx_network
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  worker:
+    image: ankarenkosergey/queue_worker
+    networks:
+      - queue_network
+    environment: 
+      - NODE_ENV=production
+      - NATS_URI=http://broker:4222
+      - NATS_CLUSTER_ID=queue
+      - NATS_CLIENT_ID=work #{{.Task.Name}}
+    depends_on: 
+      - broker
+    volumes: 
+      - ../worker:/app
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    #restart: always
+
+  api:
+    image: ankarenkosergey/queue_api
+    ports:
+      - 3000:3000
+    networks:
+      - queue_network
+    environment: 
+      - NODE_ENV=production
+      - NATS_URI=http://broker:4222
+      - NATS_CLUSTER_ID=queue
+      - NATS_CLIENT_ID=api
+    volumes: 
+      - ../api:/app
+    depends_on: 
+      - broker
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  broker:
+    image: nats-streaming:0.17.0
+    ports:
+      - 4222:4222
+      - 8222:8222
+    command: [
+      '-p',
+      '4222',
+      '-m', 
+      '8222',
+      '-hbi',
+      '5s',
+      '-hbt',
+      '5s',
+      '-hbf',
+      '2',
+      '-SD',
+      '-cid',
+      'queue'
+    ]
+    networks:
+      - queue_network
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+  
+networks:
+  queue_network:
+  nginx_network:

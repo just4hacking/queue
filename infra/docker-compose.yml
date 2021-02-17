@@ -22,6 +22,8 @@ services:
       - NATS_CLIENT_ID=worker
     depends_on: 
       - broker
+    volumes: 
+      - ../worker:/app
     #restart: always
 
   api:
@@ -37,6 +39,8 @@ services:
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=api
+    volumes: 
+      - ../api:/app
     depends_on: 
       - broker
 

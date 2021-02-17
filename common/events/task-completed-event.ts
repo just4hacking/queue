@@ -6,7 +6,7 @@ export interface TaskCompletedEvent {
     id: string;
     task: {
       id: string;
-      result: string;
+      result: any;
     }
   };
 }

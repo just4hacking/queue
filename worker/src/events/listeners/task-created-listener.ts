@@ -17,14 +17,17 @@ export class TaskCreatedListener extends Listener<TaskCreatedEvent> {
     
     console.log(`${id}:${task.id} - We received text: ${task.content}` )
     
-    const color = randomBytes(6).toString('hex')
+    const color = randomBytes(3).toString('hex')
 
     setTimeout(() => {
       new TaskCompletedPublisher(this.client).publish({
         id,
         task: {
           id: task.id,
-          result: color
+          result: {
+            color,
+            text: task.content
+          }
         }
       })
     }, 2000)

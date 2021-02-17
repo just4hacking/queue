@@ -3,7 +3,7 @@ services:
   client:
     build: 
       context: ../client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes: 
       - ../client:/app
     networks: 
@@ -25,7 +25,7 @@ services:
   worker:
     build:
       context: ../worker
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     networks:
       - queue_network
     environment: 
@@ -42,7 +42,7 @@ services:
   api:
     build:
       context: ../api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
     networks:

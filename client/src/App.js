@@ -9,7 +9,7 @@ function App() {
   const [text, setText] = useState('')
   const [items, setItems] = useState([])
   const { doRequest, errors } = useRequest({ 
-    url: 'http://localhost:3000/api/task' ,
+    url: '/api/task' ,
     method: 'post',
     body: {
       text
@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     const updateMsec = 2000
     const interval = setInterval(async () => {
-      const response = await axios.delete('http://localhost:3000/api/task', {
+      const response = await axios.delete('/api/task', {
         body: {}
       })
       console.log(response)

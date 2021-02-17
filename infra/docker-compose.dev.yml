@@ -21,6 +21,9 @@ services:
     restart: always
     networks:
       - nginx_network
+    depends_on: 
+      - api
+      - client
 
   worker:
     build:
@@ -43,10 +46,9 @@ services:
     build:
       context: ../api
       dockerfile: Dockerfile.dev
-    ports:
-      - 3000:3000
     networks:
       - queue_network
+      - nginx_network
     environment: 
       - NODE_ENV=production
       - NATS_URI=http://broker:4222

@@ -31,6 +31,9 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    depends_on: 
+      - api
+      - client
 
   worker:
     image: ankarenkosergey/queue_worker
@@ -54,10 +57,9 @@ services:
 
   api:
     image: ankarenkosergey/queue_api
-    ports:
-      - 3000:3000
     networks:
       - queue_network
+      - nginx_network
     environment: 
       - NODE_ENV=production
       - NATS_URI=http://broker:4222

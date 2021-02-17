@@ -9,7 +9,18 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <App />
-    <ToastContainer />
+    <ToastContainer
+      position="top-center"
+      autoClose={1000}
+      
+      hideProgressBar
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
   </React.StrictMode>,
   document.getElementById('root')
 );

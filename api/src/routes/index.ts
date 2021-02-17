@@ -1,2 +1,2 @@
 export * from './new'
-export * from './task'
+export * from './delete'

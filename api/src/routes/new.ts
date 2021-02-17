@@ -19,7 +19,7 @@ router.post('/api/task', async (req: Request, res: Response) => {
       }
     })
   
-  res.status(201).send({ status: 'The text was sent to worker, waiting...' })
+  res.status(201).send({ status: 'Successfully sent! 🎉' })
 })
 
 export { router as newTaskRouter }

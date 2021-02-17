@@ -1,0 +1,1 @@
+export { inMemoryStorage as storageImpl } from './in-memory-storage'

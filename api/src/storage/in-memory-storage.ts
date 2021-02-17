@@ -9,7 +9,7 @@ export interface TextItem extends Item {
   }
 }
 
-export class InMemoryStorage implements Storage<TextItem> {
+class InMemoryStorage implements Storage<TextItem> {
   items:TextItem[] = []
 
   push(item: TextItem) {
@@ -20,4 +20,10 @@ export class InMemoryStorage implements Storage<TextItem> {
   pop() {
     return this.items.pop() || null 
   }
+
+  getAll() {
+    return this.items
+  }
 }
+
+export const inMemoryStorage:Storage<TextItem> = new InMemoryStorage() 

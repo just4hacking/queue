@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { toast } from 'react-toastify'
 import logo from './logo.svg';
 import './App.css';
@@ -6,6 +7,7 @@ import { useRequest } from './hooks'
 
 function App() {
   const [text, setText] = useState('')
+  const [items, setItems] = useState([])
   const { doRequest, errors } = useRequest({ 
     url: 'http://localhost:3000/api/task' ,
     method: 'post',
@@ -13,10 +15,36 @@ function App() {
       text
     },
     onSuccess: ({ status }) => {
-      toast(status)
+      toast.dark(status)
       setText('')
     }
   })
+
+  useEffect(() => {
+    const updateMsec = 2000
+    const interval = setInterval(async () => {
+      const response = await axios.delete('http://localhost:3000/api/task', {
+        body: {}
+      })
+      console.log(response)
+      if (response.status === 200) {
+        console.log('here')
+        setItems([...items, response.data.item.data ])
+      }
+      
+    }, updateMsec)
+
+    return () => {
+      clearInterval(interval)
+    }
+  });
+
+  const renderItems = () => {
+    
+    return items.map(({ text, color }) => {
+      return <div style={{ color: `#${color}` }}>{text}</div>
+    })
+  }
 
   const onSubmit = () => {
     doRequest()
@@ -58,6 +86,9 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         {renderContent()}
+        <div className="mt-3 w-100 text-center" style={{ height: '200px', overflowY: 'scroll'  }}>
+          {renderItems()}
+        </div>
       </header>
     </div>
   );

@@ -2,8 +2,6 @@ version: '3'
 services:
   client:
     image: ankarenkosergey/queue_client
-    volumes: 
-      - ../client:/app
     networks: 
       - nginx_network
     deploy:
@@ -45,8 +43,6 @@ services:
       - NATS_CLIENT_ID=work #{{.Task.Name}}
     depends_on: 
       - broker
-    volumes: 
-      - ../worker:/app
     deploy:
       replicas: 1
       update_config:
@@ -67,8 +63,6 @@ services:
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=api
-    volumes: 
-      - ../api:/app
     depends_on: 
       - broker
     deploy:

@@ -14,7 +14,7 @@ export class TaskCompletedListener extends Listener<TaskCompletedEvent> {
   async onMessage(data: TaskCompletedEvent['data'], msg: Message) {
     const { task, id } = data
     
-    console.log(`${id}:${task.id} - Text was painted to ${task.result} color` )
+    console.log(`${id}:${task.id} - Text was painted to ${task.result.color} color` )
     
     storage.push({
       type: ItemTypes.TextColor,

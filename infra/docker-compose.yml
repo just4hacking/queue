@@ -4,10 +4,23 @@ services:
     build: 
       context: ../client
       dockerfile: Dockerfile
-    ports: 
-      - 8080:3000
     volumes: 
       - ../client:/app
+    networks: 
+      - nginx_network
+
+  nginx:
+    image: nginx:1.19-alpine
+    ports:
+      - 80:80
+    volumes: 
+      - ./nginx/templates:/etc/nginx/templates
+    restart: always
+    environment:
+      NGINX_HOST: _
+    restart: always
+    networks:
+      - nginx_network
 
   worker:
     build:
@@ -19,7 +32,7 @@ services:
       - NODE_ENV=production
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
-      - NATS_CLIENT_ID=worker
+      - NATS_CLIENT_ID=work #{{.Task.Name}}
     depends_on: 
       - broker
     volumes: 
@@ -69,3 +82,4 @@ services:
   
 networks:
   queue_network:
+  nginx_network:

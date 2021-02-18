@@ -43,11 +43,11 @@ services:
       - NODE_ENV=production
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
-      - NATS_CLIENT_ID=work #{{.Task.Name}}
+      - NATS_CLIENT_ID="worker-{{.Task.ID}}"
     depends_on: 
       - broker
     deploy:
-      replicas: 1
+      replicas: 3
       update_config:
         parallelism: 1
         delay: 10s

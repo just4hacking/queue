@@ -2,25 +2,35 @@ import { pool } from '../pool'
 import { toCamelCase } from '../utils/to-camel-case'
 import { ActionStatus } from './action-status'
 
-export class DonationRepo {
-  static async find() {
-    const { rows } = await pool.query('SELECT * FROM donations')
+const TABLE_NAME = 'donations'
+
+export interface Donation {
+  id: number
+  comment: string
+  amount: number
+  paid: boolean
+  actionStatus: ActionStatus
+} 
+
+export class DonationsRepo {
+  static async find(): Promise<Donation[]> {
+    const { rows } = await pool.query(`SELECT * FROM ${TABLE_NAME}`)
     const parsedRows = toCamelCase(rows)
     return parsedRows
   }
 
-  static async findById(id:string) {
+  static async findById(id:string): Promise<Donation | null> {
     const { rows } = await pool.query(`
-      SELECT * FROM donations
+      SELECT * FROM ${TABLE_NAME}
       WHERE id = $1
     `, [id])
     const parsedRows = toCamelCase(rows)
-    return parsedRows[0]
+    return parsedRows[0] || null
   }
 
-  static async insert(comment:string, amount:number, actionStatus:ActionStatus, paid:boolean) {
+  static async insert(comment:string, amount:number, actionStatus:ActionStatus, paid:boolean): Promise<Donation> {
     const { rows } = await pool.query(`
-      INSERT INTO donations (comment, amount, action_status, paid) 
+      INSERT INTO ${TABLE_NAME} (comment, amount, action_status, paid) 
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `, [comment, amount, actionStatus, paid])
@@ -29,9 +39,9 @@ export class DonationRepo {
     return parsedRows[0]
   }
 
-  static async setPaid(id:string) {
+  static async setPaid(id:string): Promise<Donation> {
     const { rows } = await pool.query(`
-      UPDATE Donations
+      UPDATE ${TABLE_NAME}
       SET paid = true
       WHERE id = $1
       RETURNING *
@@ -41,9 +51,9 @@ export class DonationRepo {
     return parsedRows[0]
   }
 
-  static async updateActionStatus(id:string, actionStatus:ActionStatus) {
+  static async updateActionStatus(id:string, actionStatus:ActionStatus): Promise<Donation>  {
     const { rows } = await pool.query(`
-      UPDATE Donations
+      UPDATE ${TABLE_NAME}
       SET action_status = $2
       WHERE id = $1
       RETURNING *
@@ -56,7 +66,7 @@ export class DonationRepo {
   /*
   static async delete(id:string) {
     const { rows } = await pool.query(`
-      DELETE FROM donations
+      DELETE FROM ${TABLE_NAME}
       WHERE id = $1
       RETURNING *
     `, [id])
@@ -66,9 +76,9 @@ export class DonationRepo {
   }
   */
 
-  static async count() {
+  static async count(): Promise<number> {
     const { rows } = await pool.query(`
-      SELECT COUNT(*) FROM donations
+      SELECT COUNT(*) FROM ${TABLE_NAME}
     `)
 
     return parseInt(rows[0].count)

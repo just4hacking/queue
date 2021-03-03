@@ -1,18 +1,5 @@
 version: '3'
 services:
-  postgres:
-    image: postgres:13-alpine
-    ports:
-      - 5432:5432
-    networks: 
-      - queue_network
-    environment: 
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_USER=user
-      - POSTGRES_DB=db_1
-    volumes:
-      - ./postgres/init.dev.sql:/docker-entrypoint-initdb.d/init.sql
-
   worker:
     build:
       context: ../worker
@@ -24,8 +11,15 @@ services:
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=worker
+
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=pass
+      - DB_NAME=db_1
     depends_on: 
       - broker
+      - postgres
     volumes: 
       - ../worker:/app
     #restart: always
@@ -44,6 +38,7 @@ services:
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=api
+
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USER=user
@@ -53,6 +48,7 @@ services:
       - ../api:/app
     depends_on: 
       - broker
+      - postgres
 
   broker:
     image: nats-streaming:0.17.0
@@ -76,7 +72,20 @@ services:
     ]
     networks:
       - queue_network
-  
+
+  postgres:
+    image: postgres:13-alpine
+    ports:
+      - 5432:5432
+    networks: 
+      - queue_network
+    environment: 
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=user
+      - POSTGRES_DB=db_1
+    volumes:
+      - ./postgres/init.dev.sql:/docker-entrypoint-initdb.d/init.sql
+      
 networks:
   queue_network:
   nginx_network:

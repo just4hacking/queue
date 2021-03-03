@@ -6,19 +6,27 @@ const TABLE_NAME = 'donation_messages'
 export interface DonationMessage {
   id: number
   color: string
-  donation_id: number
+  donation_id: number,
+
+  comment: string,
 } 
 
 export class DonationMessagesRepo {
   static async find() : Promise<DonationMessage[]> {
-    const { rows } = await pool.query(`SELECT * FROM ${TABLE_NAME}`)
+    const { rows } = await pool.query(`
+      SELECT color, comment, donation_messages.id, donation_id
+      FROM ${TABLE_NAME}
+      LEFT JOIN donations on donations.id = ${TABLE_NAME}.donation_id
+    `)
     const parsedRows = toCamelCase(rows)
     return parsedRows
   }
 
   static async findById(id:string): Promise<DonationMessage | null> {
     const { rows } = await pool.query(`
-      SELECT * FROM ${TABLE_NAME}
+      SELECT color, comment, donation_messages.id, donation_id
+      FROM ${TABLE_NAME}
+      LEFT JOIN donations on donations.id = ${TABLE_NAME}.donation_id
       WHERE id = $1
     `, [id])
     const parsedRows = toCamelCase(rows)

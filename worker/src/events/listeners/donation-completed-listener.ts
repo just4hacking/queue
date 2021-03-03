@@ -8,6 +8,7 @@ import {
   DonationMessagesRepo,
   ActionStatus
 } from '@asaqueue/common'
+import { randomBytes } from 'crypto'
 import { createDonationMesssageAction } from './queue-group-name'
 
 export class DonationConfirmedListener extends Listener<DonationConfirmedEvent> {
@@ -22,7 +23,8 @@ export class DonationConfirmedListener extends Listener<DonationConfirmedEvent> 
     if (donation && donation.actionStatus === ActionStatus.InProgress) {
       //should be a transaction
       {
-        await DonationMessagesRepo.insert('FFFFFF', parseInt(id));
+        const color = randomBytes(3).toString('hex').toUpperCase()
+        await DonationMessagesRepo.insert(color, parseInt(id));
         await DonationsRepo.updateActionStatus(id, ActionStatus.Done)
         console.log(`Donation ${id} confirmed`)
       }

@@ -1,5 +1,37 @@
 version: '3'
 services:
+  client:
+    build:
+      context: ../client
+      dockerfile: Dockerfile.dev
+    networks: 
+      - nginx_network
+    volumes: 
+      - ../client:/app
+
+  nginx:
+    image: nginx:1.19-alpine
+    ports:
+      - 80:80
+    volumes: 
+      - ./nginx/templates:/etc/nginx/templates
+    restart: always
+    environment:
+      NGINX_HOST: _
+    restart: always
+    networks:
+      - nginx_network
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    depends_on: 
+      - api
+      - client
+
   worker:
     build:
       context: ../worker
@@ -85,7 +117,7 @@ services:
       - POSTGRES_DB=db_1
     volumes:
       - ./postgres/init.dev.sql:/docker-entrypoint-initdb.d/init.sql
-      
+
 networks:
   queue_network:
   nginx_network:

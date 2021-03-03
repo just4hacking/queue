@@ -1,5 +1,7 @@
-import * as test from './errors'
 export * from './errors'
 export * from './events/types'
 export * from './events'
 export * from './middlewares'
+export * from './pool'
+export * from './repos'
+export * from './pool'

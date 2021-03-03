@@ -1,4 +1,5 @@
 import { TaskCreatedListener } from './events/listeners'
+import { DonationConfirmedListener } from './events/listeners/donation-completed-listener'
 import { natsWrapper } from './nats-wrapper'
 
 const start = async () => {
@@ -35,6 +36,7 @@ const start = async () => {
     process.on('SIGTERM', () => natsWrapper.client.close())
     
     new TaskCreatedListener(natsWrapper.client).listen()
+    new DonationConfirmedListener(natsWrapper.client).listen()
   }
   catch (err) {
     console.log(err)

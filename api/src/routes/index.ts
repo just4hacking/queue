@@ -1,2 +1,2 @@
-export * from './new'
-export * from './delete'
+export * from './donations'
+export * from './payment'

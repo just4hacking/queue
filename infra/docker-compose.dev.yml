@@ -1,29 +1,17 @@
 version: '3'
 services:
-  client:
-    build: 
-      context: ../client
-      dockerfile: Dockerfile.dev
-    volumes: 
-      - ../client:/app
-    networks: 
-      - nginx_network
-
-  nginx:
-    image: nginx:1.19-alpine
+  postgres:
+    image: postgres:13-alpine
     ports:
-      - 80:80
-    volumes: 
-      - ./nginx/templates:/etc/nginx/templates
-    restart: always
-    environment:
-      NGINX_HOST: _
-    restart: always
-    networks:
-      - nginx_network
-    depends_on: 
-      - api
-      - client
+      - 5432:5432
+    networks: 
+      - queue_network
+    environment: 
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=user
+      - POSTGRES_DB=db_1
+    volumes:
+      - ./postgres/init.dev.sql:/docker-entrypoint-initdb.d/init.sql
 
   worker:
     build:
@@ -49,11 +37,18 @@ services:
     networks:
       - queue_network
       - nginx_network
+    ports: 
+      - 3000:3000
     environment: 
       - NODE_ENV=production
       - NATS_URI=http://broker:4222
       - NATS_CLUSTER_ID=queue
       - NATS_CLIENT_ID=api
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=pass
+      - DB_NAME=db_1
     volumes: 
       - ../api:/app
     depends_on: 
